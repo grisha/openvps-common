@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-# $Id: __init__.py,v 1.1 2004/03/25 17:03:45 grisha Exp $
+# $Id: __init__.py,v 1.1 2005/01/12 21:25:03 grisha Exp $
 
-
-### Note that this file belongs to the oh-common package 
+VERSION = "0.1a"

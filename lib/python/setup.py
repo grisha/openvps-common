@@ -14,21 +14,19 @@
 # limitations under the License.
 #
 
-# $Id: setup.py,v 1.1 2004/03/25 17:03:45 grisha Exp $
+# $Id: setup.py,v 1.2 2005/01/12 21:25:03 grisha Exp $
 
 from distutils.core import setup, Extension
 
-VER = '0.1'
+VER = open('../../version.txt').read().strip()
 
-import sys
-
-setup(name='oh-common',
+setup(name='openvps-common',
       version=VER,
-      description='OpenHosting Common Utilities',
+      description='OpenVPS Common Utilities',
       author='OpenHosting, Inc.',
-      author_email='oss@dev.openhosting.com',
-      url='http://dev.openhosting.com/',
-      packages=['oh', 'oh.common'])
+      author_email='dev@openvps.org',
+      url='http://www.openvps.org/',
+      packages=['openvps', 'openvps.common'])
 
 
                           

@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: cfg.py,v 1.4 2004/12/30 20:33:07 grisha Exp $
+# $Id: cfg.py,v 1.1 2005/01/12 21:25:03 grisha Exp $
 
 # These config elements are common between host and admin
 

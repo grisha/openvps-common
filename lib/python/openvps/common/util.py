@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: util.py,v 1.1 2004/03/25 17:03:45 grisha Exp $
+# $Id: util.py,v 1.1 2005/01/12 21:25:03 grisha Exp $
 
 """ Misc. Utilities """
 

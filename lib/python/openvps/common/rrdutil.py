@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: rrdutil.py,v 1.4 2004/11/16 03:28:56 grisha Exp $
+# $Id: rrdutil.py,v 1.1 2005/01/12 21:25:03 grisha Exp $
 
 """ RRDTool related utilities """
 
