@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: cfg.py,v 1.1 2005/01/12 21:25:03 grisha Exp $
+# $Id: cfg.py,v 1.2 2005/01/19 19:17:18 grisha Exp $
 
 # These config elements are common between host and admin
 
@@ -80,6 +80,5 @@ MON_DATA_DEF = [('hostname', None, None, None, None),
                 ('fs_handlers_used', 'gauge', HB, 0, 0xFFFFFF00L),
                 ('fs_handlers_avail', 'gauge', HB, 0, 0xFFFFFF00L),
                 ]
-
 
 
