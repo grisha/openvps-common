@@ -270,7 +270,7 @@ PACKAGE_VERSION=
 PACKAGE_STRING=
 PACKAGE_BUGREPORT=
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS SET_MAKE PYTHON_BIN LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS SET_MAKE PYTHON_BIN PYTHON LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -1216,8 +1216,8 @@ fi
 
 # check for Python executable
 if test -z "$PYTHON_BIN"; then
-  # Extract the first word of "python", so it can be a program name with args.
-set dummy python; ac_word=$2
+  # Extract the first word of "python2.3", so it can be a program name with args.
+set dummy python2.3; ac_word=$2
 echo "$as_me:$LINENO: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
 if test "${ac_cv_path_PYTHON_BIN+set}" = set; then
@@ -1262,6 +1262,8 @@ echo "$as_me: error: python binary not found in path" >&2;}
   fi
 fi
 
+PYTHON=`basename $PYTHON_BIN`
+
 # find out python version
 echo "$as_me:$LINENO: checking Python version" >&5
 echo $ECHO_N "checking Python version... $ECHO_C" >&6
@@ -1277,7 +1279,7 @@ echo "$as_me: error: This version of only works with Python major version 2. The
    { (exit 1); exit 1; }; }
 fi
 
-          ac_config_files="$ac_config_files Makefile"
+                    ac_config_files="$ac_config_files Makefile mkspec"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -1828,6 +1830,7 @@ do
   case "$ac_config_target" in
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+  "mkspec" ) CONFIG_FILES="$CONFIG_FILES mkspec" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
@@ -1913,6 +1916,7 @@ s,@ECHO_T@,$ECHO_T,;t t
 s,@LIBS@,$LIBS,;t t
 s,@SET_MAKE@,$SET_MAKE,;t t
 s,@PYTHON_BIN@,$PYTHON_BIN,;t t
+s,@PYTHON@,$PYTHON,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 CEOF

@@ -1,0 +1,50 @@
+#!/bin/sh
+
+# ------- package info -------
+
+echo "Summary: OpenVPS Common Libs"
+echo "Name: openvps-common"
+echo "Version: `cat version.txt`"
+echo "Release: 1"
+echo "License: ASL 2.0"
+echo "Group: OpenVPS"
+echo "URL: http://www.openvps.org/"
+echo "Vendor: OpenHosting, Inc."
+echo "Requires: @PYTHON@ httpd mod_python mod_ssl bind rrdtool util-vserver cq-tools vproc"
+echo "Source0: %{name}-%{version}.tgz"
+echo "BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot"
+echo "BuildPrereq: python2.3-devel httpd-devel"
+
+echo "%description"
+echo "OpenVPS Host Utilities"
+
+# ------- build -------
+
+echo "%prep"
+echo "%setup -q"
+
+echo "%build"
+echo "%configure"
+echo "make"
+
+# ------- install -------
+
+echo "%install"
+echo "mkdir -p -m 755 \$RPM_BUILD_ROOT/etc/init.d"
+echo "mkdir -p -m 755 \$RPM_BUILD_ROOT/etc/cron.d"
+echo "mkdir -p -m 755 \$RPM_BUILD_ROOT/etc/httpd/conf.d"
+echo "mkdir -p -m 755 \$RPM_BUILD_ROOT/etc/ssh"
+echo "mkdir -p -m 755 \$RPM_BUILD_ROOT/usr/oh/misc"
+echo "mkdir -p -m 755 \$RPM_BUILD_ROOT/%{_libdir}/@PYTHON@/site-packages/oh"
+echo "make install DESTDIR=\$RPM_BUILD_ROOT"
+
+echo "%clean"
+echo '[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT'
+
+echo "%files"
+echo "%defattr(-,root,root,-)"
+echo "%doc"
+echo "%{_libdir}/@PYTHON@/site-packages/oh"
+
+
+
