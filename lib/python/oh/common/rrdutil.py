@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: rrdutil.py,v 1.1 2004/03/25 17:03:45 grisha Exp $
+# $Id: rrdutil.py,v 1.2 2004/03/26 03:07:10 grisha Exp $
 
 """ RRDTool related utilities """
 
@@ -86,8 +86,8 @@ def graph(rrd, back=86400, title=''):
     cmd += 'DEF:out=%s:out:AVERAGE ' % rrd
     cmd += 'CDEF:inbits=in,8,* ' \
            'CDEF:outbits=out,8,* ' \
-           'AREA:inbits#00FF00:"Mbps in" ' \
-           'LINE1:outbits#0000FF:"Mbps out" '
+           'AREA:inbits#00FF00:"bps in" ' \
+           'LINE1:outbits#000FF:"Mbps out" '
     commands.getoutput(cmd)
 
     return tpath
