@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: crypto.py,v 1.4 2005/03/16 20:48:45 grisha Exp $
+# $Id: crypto.py,v 1.5 2005/03/18 19:37:55 grisha Exp $
 
 """ Crypto Functions """
 
@@ -57,7 +57,8 @@ def pad(str, block_size, pchar=' '):
 def encrypt(str, passphrase):
     """ Encrypt a string """
 
-    aes  = AES.new(pad(passphrase, 32), AES.MODE_CBC)
+    # 31 becase 32 would make the result 64 (see pad())
+    aes  = AES.new(pad(passphrase[:31], 32), AES.MODE_CBC)
 
     # need salt to make sure output is different every time
     salt = random(8)
@@ -74,7 +75,7 @@ def encrypt(str, passphrase):
 def decrypt(str, passphrase):
     """ Decrypt a string """
 
-    aes  = AES.new(pad(passphrase, 32), AES.MODE_CBC)
+    aes  = AES.new(pad(passphrase[:31], 32), AES.MODE_CBC)
 
     msg = aes.decrypt(pad(str[4:], AES.block_size))
 
@@ -111,6 +112,40 @@ def rsa_decrypt(str, key):
 
     return msg[8:]
     
+
+def rsa_encrypt_long(str, key):
+    """ Encrypt any length string using RSA """
+
+    # actually, we only use RSA to encrypt a random password, the
+    # string will be encypted using the ecrypt() method (which uses
+    # AES)
+
+    # make the password 32 is the AES key size above, 8 is what is
+    # used for salt in our rsa_encrypt. so the password should be as
+    # large as what rsa can encrypt, but not larger than 32
+    passwd = random(min(32, (key.size()+1)/8-8))
+
+    # encrypt using RSA
+    c_passwd = rsa_encrypt(passwd, key)
+
+    return c_passwd + encrypt(str, passwd)
+
+
+def rsa_decrypt_long(str, key):
+
+    # the first bytes up to keylen+4 are the aes key
+
+    passlen = (key.size()+1)/8+4
+
+    c_passwd = str[:passlen]
+    passwd = rsa_decrypt(c_passwd, key)
+
+    if not passwd:
+        # bad key or something
+        return None
+
+    return decrypt(str[passlen:], passwd)
+
 
 def save_key(key, path, passphrase=None):
 
