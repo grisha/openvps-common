@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: cfg.py,v 1.3 2004/12/28 03:29:44 grisha Exp $
+# $Id: cfg.py,v 1.4 2004/12/30 20:33:07 grisha Exp $
 
 # These config elements are common between host and admin
 
@@ -59,6 +59,16 @@ MON_DATA_DEF = [('hostname', None, None, None, None),
                 ('disk_tmp_free', 'gauge', HB, 0, 'U'),
                 ('disk_backup_free', 'gauge', HB, 0, 'U'),
                 ('disk_vservers_free', 'gauge', HB, 0, 'U'),
+                ('disk_root_i_used', 'gauge', HB, 0, 'U'),
+                ('disk_var_i_used', 'gauge', HB, 0, 'U'),
+                ('disk_tmp_i_used', 'gauge', HB, 0, 'U'),
+                ('disk_backup_i_used', 'gauge', HB, 0, 'U'),
+                ('disk_vservers_i_used', 'gauge', HB, 0, 'U'),
+                ('disk_root_i_free', 'gauge', HB, 0, 'U'),
+                ('disk_var_i_free', 'gauge', HB, 0, 'U'),
+                ('disk_tmp_i_free', 'gauge', HB, 0, 'U'),
+                ('disk_backup_i_free', 'gauge', HB, 0, 'U'),
+                ('disk_vservers_i_free', 'gauge', HB, 0, 'U'),
                 ('disk_a_reads', 'counter', HB, 0, 0xFFFFFF00L),
                 ('disk_a_writes', 'counter', HB, 0, 0xFFFFFF00L),
                 ('disk_b_reads', 'counter', HB, 0, 0xFFFFFF00L),
@@ -67,6 +77,8 @@ MON_DATA_DEF = [('hostname', None, None, None, None),
                 ('ipc_totshm', 'gauge', HB, 0, 0xFFFFFF00L),
                 ('ipc_semmns', 'gauge', HB, 0, 0xFFFFFF00L),
                 ('ipc_totsem', 'gauge', HB, 0, 0xFFFFFF00L),
+                ('fs_handlers_used', 'gauge', HB, 0, 0xFFFFFF00L),
+                ('fs_handlers_avail', 'gauge', HB, 0, 0xFFFFFF00L),
                 ]
 
 
