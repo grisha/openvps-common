@@ -14,25 +14,34 @@
 # limitations under the License.
 #
 
-# $Id: Makefile.in,v 1.2 2004/10/04 17:01:08 grisha Exp $
+# $Id: Makefile.in,v 1.3 2004/12/21 21:07:06 grisha Exp $
 
 all:
 
 install:
-	cd lib/python && @PYTHON@ setup.py install
 	if test -z "$(DESTDIR)"; then \
 		cd lib/python && @PYTHON@ setup.py install; \
 	else \
 		cd lib/python && @PYTHON@ setup.py install --root $(DESTDIR); \
 	fi
+	if test -z "$(DESTDIR)"; then \
+		cd py-rrd && @PYTHON@ setup.py install; \
+	else \
+		cd py-rrd && @PYTHON@ setup.py install --root $(DESTDIR); \
+	fi
 
 
 clean:
 	rm -rf *~ lib/python/oh/common/*.pyc lib/python/oh/common/*.pyo lib/python/oh/common/*~ lib/python/build
+	cd py-rrd; \
+	$(MAKE) clean
 
 distclean: clean
 	rm -rf Makefile config.h config.status config.cache config.log \
 		autom4te.cache
+	cd py-rrd; \
+	$(MAKE) distclean 
+
 
 spec:
 	. ./mkspec > openvps-common.spec
