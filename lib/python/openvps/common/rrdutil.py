@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: rrdutil.py,v 1.2 2005/01/18 00:05:20 grisha Exp $
+# $Id: rrdutil.py,v 1.3 2005/02/11 22:46:27 grisha Exp $
 
 """ RRDTool related utilities """
 
@@ -26,6 +26,23 @@ import time
 import os
 import tempfile
 import commands
+
+import RRD
+
+def period_total(rrd, start, end):
+
+    header, rows = RRD.fetch(rrd, 'AVERAGE', '-s', str(start), '-e', str(end))
+
+    tin, tout = 0.0, 0.0
+
+    for row in rows:
+        if row[1]:
+            tin += row[1]
+        if row[2]:
+            tim += row[2]
+
+    return long(tin*RRDSTEP), long(tout*RRDSTEP)
+
 
 def period_total(rrd, start, end):
 
@@ -74,6 +91,26 @@ def month_total(rrd, year, month):
     return period_total(rrd, s, e)
 
 def graph(rrd, back=86400, title='', width=400, height=100):
+    """ Make an RRD graph. The caller is responsible for
+    deleting the returned path """
+    
+    tfile, tpath = tempfile.mkstemp('.gif', 'oh')
+    os.close(tfile)
+
+    RRD.graph(tpath, '--start', '-'+str(back),
+              '--title', title,
+              '-w', str(width),
+              '-h', str(height),
+              'DEF:in=%s:in:AVERAGE' % rrd,
+              'DEF:out=%s:out:AVERAGE' % rrd,
+              'CDEF:inbits=in,8,*',
+              'CDEF:outbits=out,8,*',
+              'AREA:inbits#00FF00:"bps in"',
+              'LINE1:outbits#0000FF:"bps out"')
+
+    return tpath
+
+def graph_old(rrd, back=86400, title='', width=400, height=100):
     """ Make an RRD graph. The caller is responsible for
     deleting the returned path """
     
