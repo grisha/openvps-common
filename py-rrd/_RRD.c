@@ -13,7 +13,7 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  *
- * $Id: _RRD.c,v 1.4 2005/02/11 21:30:52 grisha Exp $
+ * $Id: _RRD.c,v 1.5 2005/02/11 22:24:19 grisha Exp $
  *
  */
 
@@ -176,6 +176,67 @@ static PyObject * _RRD_fetch(int argc, char **argv) {
     return NULL;
 }
 
+static PyObject * _RRD_graph(int argc, char **argv) {
+
+    int rc, xsize, ysize;
+    char **prdata;
+
+    PyObject *result;
+
+    rc = rrd_graph(argc, argv, &prdata, &xsize, &ysize);
+
+    if (rc == -1) {
+        PyMem_DEL(argv);
+        PyErr_SetString(PyExc_ValueError,
+                        rrd_get_error());
+        rrd_clear_error();
+        return NULL;
+    }
+
+    result = PyTuple_New(3);
+    if (! result) {
+        PyMem_DEL(argv);
+        return NULL;
+    }
+
+    PyTuple_SET_ITEM(result, 0, PyInt_FromLong((long)xsize));
+    PyTuple_SET_ITEM(result, 1, PyInt_FromLong((long)ysize));
+
+    if (prdata) {
+        PyObject *e, *t;
+        int i;
+
+        e = PyList_New(0);
+        if (! e) 
+            goto error;
+        PyTuple_SET_ITEM(result, 2, e);
+
+        for(i = 0; prdata[i]; i++) {
+            t = PyString_FromString(prdata[i]);
+            if (! t) {
+                Py_DECREF(e);
+                goto error;
+            }
+            PyList_Append(e, t);
+            Py_DECREF(t);
+            free(prdata[i]);
+        }
+        free(prdata);
+    } else {
+        Py_INCREF(Py_None);
+        PyTuple_SET_ITEM(result, 2, Py_None);
+    }
+    
+    PyMem_DEL(argv);
+    return result;
+
+ error:
+
+    Py_DECREF(result);
+    PyMem_DEL(argv);
+    return NULL;
+}
+
 static PyObject * _RRD_call(PyObject *self, PyObject *args) {
 
     char **argv;
@@ -199,8 +260,10 @@ static PyObject * _RRD_call(PyObject *self, PyObject *args) {
         rc = rrd_last(argc, argv);
     else if (!strcmp("resize", argv[0]))
         rc = rrd_resize(argc, argv);
-    else if (!strcmp("fetch", argv[0])) {
+    else if (!strcmp("fetch", argv[0])) 
         return _RRD_fetch(argc, argv);
+    else if (!strcmp("graph", argv[0])) {
+        return _RRD_graph(argc, argv);
     }
     else {
         PyMem_DEL(argv);

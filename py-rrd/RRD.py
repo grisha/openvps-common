@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: RRD.py,v 1.2 2005/01/25 20:41:25 grisha Exp $
+# $Id: RRD.py,v 1.3 2005/02/11 22:24:19 grisha Exp $
 
 from types import ListType, TupleType
 
@@ -51,3 +51,6 @@ def resize(*args):
 
 def fetch(*args):
     return _call('fetch', args)
+
+def graph(*args):
+    return _call('graph', args)
