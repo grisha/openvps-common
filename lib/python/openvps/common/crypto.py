@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: crypto.py,v 1.5 2005/03/18 19:37:55 grisha Exp $
+# $Id: crypto.py,v 1.6 2005/04/05 20:07:59 grisha Exp $
 
 """ Crypto Functions """
 
@@ -24,14 +24,16 @@ from Crypto.Cipher import AES
 import marshal
 import binascii
 import os
+import random
+import crypt
 
-def random(n):
+def urandom(n):
 
     return open('/dev/urandom').read(n)
 
 def genkey(bits=512):
 
-    return RSA.generate(bits, random)
+    return RSA.generate(bits, urandom)
 
 def rsa2str(rsa):
     """ Convert and RSA key to an ASCII str """
@@ -61,7 +63,7 @@ def encrypt(str, passphrase):
     aes  = AES.new(pad(passphrase[:31], 32), AES.MODE_CBC)
 
     # need salt to make sure output is different every time
-    salt = random(8)
+    salt = urandom(8)
 
     # the reason it is hexlified is to be able easily strip
     # blanks upon decryption (even though this doubles the string,
@@ -93,7 +95,7 @@ def decrypt(str, passphrase):
 def rsa_encrypt(str, key):
     """ Encrypt a (short - not larger than the key) string using RSA """
 
-    salt = random(8)
+    salt = urandom(8)
 
     # here we *assume* that this is a 1-tuple, which it is with RSA
     c_text = key.encrypt(salt + str, '')[0]
@@ -123,7 +125,7 @@ def rsa_encrypt_long(str, key):
     # make the password 32 is the AES key size above, 8 is what is
     # used for salt in our rsa_encrypt. so the password should be as
     # large as what rsa can encrypt, but not larger than 32
-    passwd = random(min(32, (key.size()+1)/8-8))
+    passwd = urandom(min(32, (key.size()+1)/8-8))
 
     # encrypt using RSA
     c_passwd = rsa_encrypt(passwd, key)
@@ -158,6 +160,7 @@ def save_key(key, path, passphrase=None):
         os.unlink(path) 
     open(path, 'wb').write(str_key)
 
+
 def load_key(path, passphrase=None):
 
     str_key = open(path, 'rb').read()
@@ -172,3 +175,28 @@ def load_key(path, passphrase=None):
         return None
 
     return key
+
+def passwd_hash_md5(passwd):
+    """ Generate and MD5 password hash using crypt(3) """
+            
+    # generate a random salt
+
+    salt = ""
+    for foo in range(8):
+        i = random.randint(ord("A"), ord("z"))
+        while ord("Z") < i < ord("a"):
+            # try again, we can't use those
+            i = random.randint(ord("A"), ord("z"))
+        salt = salt + chr(i)
+
+    # call crypt()
+            
+    hash = crypt.crypt(passwd, '$1$'+salt)
+            
+    return hash
+                
+def check_passwd_md5(passwd, hash):
+
+    newhash = crypt.crypt(passwd, hash[:11])
+
+    return hash == newhash
