@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: RRD.py,v 1.1 2004/12/21 21:07:06 grisha Exp $
+# $Id: RRD.py,v 1.2 2005/01/25 20:41:25 grisha Exp $
 
 from types import ListType, TupleType
 
@@ -26,9 +26,7 @@ def _call(name, args):
         args = args[0]
     args = [name]+list(args)
 
-    print args
-        
-    return _RRD.call(name, args)
+    return _RRD.call(args)
 
 def create(*args):
     return _call('create', args)
@@ -50,3 +48,6 @@ def last(*args):
 
 def resize(*args):
     return _call('resize', args)
+
+def fetch(*args):
+    return _call('fetch', args)
