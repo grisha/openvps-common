@@ -14,13 +14,12 @@
 # limitations under the License.
 #
 
-# $Id: rrdutil.py,v 1.5 2005/02/16 16:23:46 grisha Exp $
+# $Id: rrdutil.py,v 1.6 2005/02/16 22:11:25 grisha Exp $
 
 """ RRDTool related utilities """
 
 
 RRDTOOL = '/usr/bin/rrdtool' # XXX needs to be determined by configure
-RRDSTEP = 60
 
 import time
 import os
@@ -29,13 +28,15 @@ import commands
 
 import RRD
 
-def period_total(rrd, start, end, dslist = ['in','out'], step=RRDSTEP):
+def period_total(rrd, start, end, dslist = ['in','out']):
 
     start, end = int(float(start)), int(float(end))
 
     header, rows = RRD.fetch(rrd, 'AVERAGE', '-s', str(start), '-e', str(end))
 
-    # convert DS names to numeric incies
+    step = rows[1][0] - rows[0][0]
+
+    # convert DS names to numeric indecies
     dslist = [list(header).index(x) for x in dslist]
 
     totals = [0] * len(dslist)
@@ -47,28 +48,8 @@ def period_total(rrd, start, end, dslist = ['in','out'], step=RRDSTEP):
                 totals[n] += row[ds_idx]
             n += 1
 
-    # convert to per minute values
-    return [long(x*step) for x in totals]
+    return step, totals
 
-
-def period_total_old(rrd, start, end):
-
-    cmd = '%s fetch %s AVERAGE -s %d -e %d' % (RRDTOOL, rrd, start, end)
-    pipe = os.popen(cmd, 'r')
-
-    tin, tout = 0.0, 0.0
-
-    for line in pipe:
-        line = line.strip()
-        if line and not (line.startswith('in') or line.startswith('ti')):
-            input, output = line.split()[1:]
-            if input != 'nan':
-                tin += float(input)
-            if output != 'nan':
-                tout += float(output)
-    pipe.close()
-
-    return long(tin*RRDSTEP), long(tout*RRDSTEP)
 
 def next_month(year, month):
 
@@ -93,7 +74,7 @@ def month_total(rrd, year, month, dslist=['in', 'out']):
 
     eyear, emonth = next_month(year, month)
 
-    e = time.mktime(time.strptime('%d%02d' % (eyear, emonth), '%Y%m')) - 86400
+    e = time.mktime(time.strptime('%d%02d' % (eyear, emonth), '%Y%m')) - 1
 
     return period_total(rrd, s, e, dslist)
 
