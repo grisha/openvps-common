@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: crypto.py,v 1.2 2005/02/07 18:55:21 grisha Exp $
+# $Id: crypto.py,v 1.3 2005/02/10 20:17:31 grisha Exp $
 
 """ Crypto Functions """
 
@@ -41,12 +41,13 @@ def rsa2str(rsa):
         if hasattr(rsa, k):
             key.append(getattr(rsa, k))
 
-    return marshal.dumps(tuple(key))
+    return ':'.join(map(str, key))
 
 def str2rsa(str):
     """ Convert an rsa2str() generated string back to RSA key """
 
-    return RSA.construct(marshal.loads(str))
+    return RSA.construct(tuple(map(long, str.split(':'))))
+                         
 
 def pad(str, block_size, pchar=' '):
     """ Pad string up to a block_size mltiple with pachar"""
