@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: RSASignedCookie.py,v 1.1 2005/02/07 18:55:21 grisha Exp $
+# $Id: RSASignedCookie.py,v 1.2 2005/02/08 16:04:40 grisha Exp $
 
 from mod_python import Cookie
 
@@ -24,31 +24,29 @@ import sha
 import marshal
 import binascii
 
+RSACookieError = 'RSACookieError'
+
 class RSASignedCookie(Cookie.SignedCookie):
 
     """ A cookie that uses RSA to sign the cookie value. The nice
     thing about it is that one does not need to know a shared scret to
     verify the value, only the public key is necessary. """
 
-
-    def rsa_sign(self, str):
+    def rsa_sign(self, val):
 
         if not self.__data__["secret"]:
-            raise CookieError, "Cannot sign without a RSA private key"
+            raise RSACookieError, "Cannot sign without a RSA private key"
 
-        digest = sha.new(str).digest()
+        digest = sha.new(val).digest()
         sig = self.__data__["secret"].sign(digest, open('/dev/urandom').read(32))
 
-        return binascii.hexlify(marshal.dumps(sig))
+        return str(sig[0])
 
 
-    def rsa_verify(self, str, sig):
+    def rsa_verify(self, val, sig, key):
 
-        if not self.__data__["secret"]:
-            raise CookieError, "Cannot sign without an RSA (public) key"
-
-        digest = sha.new(str).digest()
-        return self.__data__["secret"].verify(digest, binascii.unhexlify(sig))
+        digest = sha.new(val).digest()
+        return key.verify(digest, sig)
 
 
     def __str__(self):
@@ -62,3 +60,15 @@ class RSASignedCookie(Cookie.SignedCookie):
                 else:
                     result.append("%s=%s" % (name, getattr(self, name)))
         return "; ".join(result)
+
+
+    def unsign(self, key):
+
+        sig, val = self.value.split(':', 1)
+        sig = (long(sig),)
+
+        if self.rsa_verify(self.name+val, sig, key):
+            self.value = val
+        else:
+            raise RSACookieError, "Incorrectly Signed Cookie: %s=%s" % (self.name, self.value)
+
