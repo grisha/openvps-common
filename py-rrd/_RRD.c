@@ -13,7 +13,7 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  *
- * $Id: _RRD.c,v 1.2 2005/01/25 20:41:25 grisha Exp $
+ * $Id: _RRD.c,v 1.3 2005/01/26 19:30:46 grisha Exp $
  *
  */
 
@@ -100,64 +100,69 @@ static PyObject * _RRD_fetch(int argc, char **argv) {
     }
 
     /*
-     * Build ((start, end, step), (name1, name2, ...), [(data1, data2, ..), ...])
+     * Build (('timestamp', name1, name2, ...), [(timestamp, data1, data2, ..), ...])
      *
      */
 
-    result = PyTuple_New(3);
+    result = PyTuple_New(2);
     if (! result) {
         PyMem_DEL(argv);
         return NULL;
     }
 
-    /* (start, end, step) */
+    /* ('timestamp', name1, name2, ...) */
 
-    temp_obj = Py_BuildValue("(i,i,i)", start, end, step);
-    if (! temp_obj)
+    temp_obj = PyTuple_New(count+1);
+    if (! temp_obj) 
         goto error;
     PyTuple_SET_ITEM(result, 0, temp_obj);
 
-    /* (name1, name2, ...) */
-
-    temp_obj = PyTuple_New(count);
-    if (! temp_obj) 
-        goto error;
-    PyTuple_SET_ITEM(result, 1, temp_obj);
-
-    for (i = 0; i < count; i++) {
-        PyObject *str = PyString_FromString(names[i]);
+    for (i = 0; i <= count; i++) {
+        PyObject *str = (i>0) ? PyString_FromString(names[i-1]) : PyString_FromString("timestamp");
         if (! str)
             goto error;
         PyTuple_SET_ITEM(temp_obj, i, str);
     }
     
-    /* [(data1, data2, ...) */
+    /* [(timestamp, data1, data2, ...), ... ]*/
 
     row_cnt = ((end - start) / step) + 1;
 
     temp_obj = PyList_New(row_cnt);
     if (! temp_obj) 
         goto error;
-    PyTuple_SET_ITEM(result, 2, temp_obj);
+    PyTuple_SET_ITEM(result, 1, temp_obj);
 
     for (i=0; i < row_cnt; i++) {
         int ii;
-        PyObject *tup = PyTuple_New(count);
+        PyObject *tup = PyTuple_New(count+1);
         if (! tup) 
             goto error;
         PyList_SET_ITEM(temp_obj, i, tup);
-        for (ii=0; ii<count; ii++) {
-            rrd_value_t val = data[i+ii];
-            if (isnan(val)) {
-                Py_INCREF(Py_None);
-                PyTuple_SET_ITEM(tup, ii, Py_None);
-            }
-            else { 
-                PyObject *obj = PyFloat_FromDouble((double)val);
+
+        for (ii=0; ii<=count; ii++) {
+
+            if (ii == 0) {
+                /* timestamp */
+                PyObject *obj = PyFloat_FromDouble((double)(start + step*i));
                 if (! obj) 
                     goto error;
                 PyTuple_SET_ITEM(tup, ii, obj);
-            } 
+            }
+            else {
+                /* value */
+                rrd_value_t val = data[(i*count)+(ii-1)];
+                if (isnan(val)) {
+                    Py_INCREF(Py_None);
+                    PyTuple_SET_ITEM(tup, ii, Py_None);
+                }
+                else { 
+                    PyObject *obj = PyFloat_FromDouble((double)val);
+                    if (! obj) 
+                        goto error;
+                    PyTuple_SET_ITEM(tup, ii, obj);
+                } 
+            }
         }
     }
 
