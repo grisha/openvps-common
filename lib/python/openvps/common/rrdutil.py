@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: rrdutil.py,v 1.1 2005/01/12 21:25:03 grisha Exp $
+# $Id: rrdutil.py,v 1.2 2005/01/18 00:05:20 grisha Exp $
 
 """ RRDTool related utilities """
 
@@ -73,7 +73,7 @@ def month_total(rrd, year, month):
 
     return period_total(rrd, s, e)
 
-def graph(rrd, back=86400, title=''):
+def graph(rrd, back=86400, title='', width=400, height=100):
     """ Make an RRD graph. The caller is responsible for
     deleting the returned path """
     
@@ -82,6 +82,8 @@ def graph(rrd, back=86400, title=''):
 
     cmd = '%s graph %s --start -%d ' % (RRDTOOL, tpath, back)
     cmd += '--title "%s" ' % title
+    cmd += '-w %d ' % width
+    cmd += '-h %d ' % height
     cmd += 'DEF:in=%s:in:AVERAGE ' % rrd
     cmd += 'DEF:out=%s:out:AVERAGE ' % rrd
     cmd += 'CDEF:inbits=in,8,* ' \
