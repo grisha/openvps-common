@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: rrdutil.py,v 1.3 2004/03/26 03:10:52 grisha Exp $
+# $Id: rrdutil.py,v 1.4 2004/11/16 03:28:56 grisha Exp $
 
 """ RRDTool related utilities """
 
@@ -36,7 +36,7 @@ def period_total(rrd, start, end):
 
     for line in pipe:
         line = line.strip()
-        if line and not line.startswith('in'):
+        if line and not (line.startswith('in') or line.startswith('ti')):
             input, output = line.split()[1:]
             if input != 'nan':
                 tin += float(input)
