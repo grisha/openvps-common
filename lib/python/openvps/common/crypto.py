@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: crypto.py,v 1.3 2005/02/10 20:17:31 grisha Exp $
+# $Id: crypto.py,v 1.4 2005/03/16 20:48:45 grisha Exp $
 
 """ Crypto Functions """
 
@@ -60,7 +60,7 @@ def encrypt(str, passphrase):
     aes  = AES.new(pad(passphrase, 32), AES.MODE_CBC)
 
     # need salt to make sure output is different every time
-    salt = random(4)
+    salt = random(8)
 
     # the reason it is hexlified is to be able easily strip
     # blanks upon decryption (even though this doubles the string,
@@ -69,7 +69,7 @@ def encrypt(str, passphrase):
     
     c_text = aes.encrypt(hstr)
 
-    return salt + c_text
+    return salt[:4] + c_text
 
 def decrypt(str, passphrase):
     """ Decrypt a string """
@@ -87,7 +87,30 @@ def decrypt(str, passphrase):
         # salt doesn't mach, bad password
         return None
 
-    return msg[4:]
+    return msg[8:]
+
+def rsa_encrypt(str, key):
+    """ Encrypt a (short - not larger than the key) string using RSA """
+
+    salt = random(8)
+
+    # here we *assume* that this is a 1-tuple, which it is with RSA
+    c_text = key.encrypt(salt + str, '')[0]
+
+    return salt[:4] + c_text
+
+
+def rsa_decrypt(str, key):
+    """ Decrypt using RSA. Key is assumed non-encrypted """
+
+    msg = key.decrypt((str[4:],))
+
+    if msg[:4] != str[:4]:
+        # salt doesn't match, bad key or something
+        return None
+
+    return msg[8:]
+    
 
 def save_key(key, path, passphrase=None):
 
