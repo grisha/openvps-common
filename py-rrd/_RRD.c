@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 Apache Software Foundation 
+ * Copyright 2004 OpenHosting, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you
  * may not use this file except in compliance with the License.  You
@@ -13,7 +13,7 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  *
- * $Id: _RRD.c,v 1.3 2005/01/26 19:30:46 grisha Exp $
+ * $Id: _RRD.c,v 1.4 2005/02/11 21:30:52 grisha Exp $
  *
  */
 
