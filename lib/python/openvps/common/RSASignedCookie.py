@@ -14,9 +14,10 @@
 # limitations under the License.
 #
 
-# $Id: RSASignedCookie.py,v 1.4 2005/02/11 20:37:23 grisha Exp $
+# $Id: RSASignedCookie.py,v 1.5 2005/03/31 22:28:06 grisha Exp $
 
 from mod_python import Cookie
+from mod_python.Cookie import CookieError
 
 from Crypto.PublicKey import RSA
 
@@ -24,7 +25,8 @@ import sha
 import marshal
 import binascii
 
-RSACookieError = 'RSACookieError'
+class RSACookieError(CookieError):
+    pass
 
 class RSASignedCookie(Cookie.SignedCookie):
 
