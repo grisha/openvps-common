@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: RSASignedCookie.py,v 1.5 2005/03/31 22:28:06 grisha Exp $
+# $Id: RSASignedCookie.py,v 1.6 2005/04/01 15:08:04 grisha Exp $
 
 from mod_python import Cookie
 from mod_python.Cookie import CookieError
@@ -27,6 +27,10 @@ import binascii
 
 class RSACookieError(CookieError):
     pass
+
+class RSASignError(Exception):
+    pass
+
 
 class RSASignedCookie(Cookie.SignedCookie):
 
@@ -82,5 +86,5 @@ class RSASignedCookie(Cookie.SignedCookie):
         if self.rsa_verify(self.name+val, sig, key):
             self.value = val
         else:
-            raise RSACookieError, "Incorrectly Signed Cookie: %s=%s" % (self.name, self.value)
+            raise RSASignError, "Incorrectly Signed Cookie: %s=%s" % (self.name, self.value)
 
