@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: RSASignedCookie.py,v 1.3 2005/02/08 17:18:24 grisha Exp $
+# $Id: RSASignedCookie.py,v 1.4 2005/02/11 20:37:23 grisha Exp $
 
 from mod_python import Cookie
 
@@ -50,9 +50,15 @@ class RSASignedCookie(Cookie.SignedCookie):
 
 
     def __str__(self):
-        
-        result = ["%s=%s:%s" % (self.name, self.rsa_sign(self.name+self.value),
-                               self.value)]
+
+        # if we do not have the private key, then we cannot present a string
+        # representation, so we will fake something:
+        if not self.__data__["secret"]:
+            result = ["%s=%s:%s" % (self.name, 'NO RSA SIGNATURE SINCE NO PRIV KEY AVAILABLE',
+                                    self.value)]
+        else:
+            result = ["%s=%s:%s" % (self.name, self.rsa_sign(self.name+self.value),
+                                    self.value)]
         for name in self._valid_attr:
             if hasattr(self, name):
                 if name in ("secure", "discard"):
