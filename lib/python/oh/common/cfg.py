@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: cfg.py,v 1.1 2004/12/23 19:11:29 grisha Exp $
+# $Id: cfg.py,v 1.2 2004/12/24 05:26:50 grisha Exp $
 
 # These config elements are common between host and admin
 
@@ -30,15 +30,15 @@ HB = 300 # default heart beat
 
 # (name, rrd_type, hbeat, min, max)
 MON_DATA_DEF = [('hostname', None, None, None, None),
-                ('cpu_loadavg1', 'gauge', HB, 0, None),
-                ('nprocs', 'gauge', HB, 0, None),
-                ('mem_MemTotal', 'gauge', 86400, 0, None),
-                ('mem_MemFree', 'gauge', HB, 0, None),
-                ('mem_Cached', 'gauge', HB, 0, None),
-                ('mem_Active', 'gauge', HB, 0, None), 
-                ('mem_SwapTotal', 'gauge', 86400, 0, None),
-                ('mem_SwapFree', 'gauge', HB, 0, None),
-                ('forks', 'gauge', HB, 1, None),
+                ('cpu_loadavg1', 'gauge', HB, 0, 'U'),
+                ('nprocs', 'gauge', HB, 0, 'U'),
+                ('mem_MemTotal', 'gauge', 86400, 0, 'U'),
+                ('mem_MemFree', 'gauge', HB, 0, 'U'),
+                ('mem_Cached', 'gauge', HB, 0, 'U'),
+                ('mem_Active', 'gauge', HB, 0, 'U'), 
+                ('mem_SwapTotal', 'gauge', 86400, 0, 'U'),
+                ('mem_SwapFree', 'gauge', HB, 0, 'U'),
+                ('forks', 'gauge', HB, 1, 'U'),
                 ('net_eth0_rx_bytes', 'counter', HB, 0, 0xFFFFFF00L),
                 ('net_eth0_tx_bytes', 'counter', HB, 0, 0xFFFFFF00L),
                 ('net_eth0_packets', 'counter', HB, 0, 0xFFFFFF00L),
@@ -49,16 +49,16 @@ MON_DATA_DEF = [('hostname', None, None, None, None),
                 ('net_eth1_packets', 'counter', HB, 0, 0xFFFFFF00L),
                 ('net_eth1_errors', 'counter', HB, 0, 0xFFFFFF00L),
                 ('net_eth1_drop', 'counter', HB, 0, 0xFFFFFF00L),
-                ('disk_root_used', 'gauge', HB, 0, None),
-                ('disk_var_used', 'gauge', HB, 0, None),
-                ('disk_tmp_used', 'gauge', HB, 0, None),
-                ('disk_backup_used', 'gauge', HB, 0, None),
-                ('disk_vservers_used', 'gauge', HB, 0, None),
-                ('disk_root_free', 'gauge', HB, 0, None),
-                ('disk_var_free', 'gauge', HB, 0, None),
-                ('disk_tmp_free', 'gauge', HB, 0, None),
-                ('disk_backup_free', 'gauge', HB, 0, None),
-                ('disk_vservers_free', 'gauge', HB, 0, None),
+                ('disk_root_used', 'gauge', HB, 0, 'U'),
+                ('disk_var_used', 'gauge', HB, 0, 'U'),
+                ('disk_tmp_used', 'gauge', HB, 0, 'U'),
+                ('disk_backup_used', 'gauge', HB, 0, 'U'),
+                ('disk_vservers_used', 'gauge', HB, 0, 'U'),
+                ('disk_root_free', 'gauge', HB, 0, 'U'),
+                ('disk_var_free', 'gauge', HB, 0, 'U'),
+                ('disk_tmp_free', 'gauge', HB, 0, 'U'),
+                ('disk_backup_free', 'gauge', HB, 0, 'U'),
+                ('disk_vservers_free', 'gauge', HB, 0, 'U'),
                 ('disk_a_reads', 'counter', HB, 0, 0xFFFFFF00L),
                 ('disk_a_writes', 'counter', HB, 0, 0xFFFFFF00L),
                 ('disk_b_reads', 'counter', HB, 0, 0xFFFFFF00L),
