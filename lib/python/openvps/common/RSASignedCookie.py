@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: RSASignedCookie.py,v 1.2 2005/02/08 16:04:40 grisha Exp $
+# $Id: RSASignedCookie.py,v 1.3 2005/02/08 17:18:24 grisha Exp $
 
 from mod_python import Cookie
 
@@ -64,9 +64,13 @@ class RSASignedCookie(Cookie.SignedCookie):
 
     def unsign(self, key):
 
-        sig, val = self.value.split(':', 1)
-        sig = (long(sig),)
 
+        try:
+            sig, val = self.value.split(':', 1)
+            sig = (long(sig),)
+        except ValueError:
+            raise RSACookieError, "Not an RSA Signed Cookie: %s=%s" % (self.name, self.value)
+            
         if self.rsa_verify(self.name+val, sig, key):
             self.value = val
         else:
