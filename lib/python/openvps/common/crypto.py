@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: crypto.py,v 1.1 2005/02/05 05:28:18 grisha Exp $
+# $Id: crypto.py,v 1.2 2005/02/07 18:55:21 grisha Exp $
 
 """ Crypto Functions """
 
