@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: rrdutil.py,v 1.4 2005/02/15 21:49:36 grisha Exp $
+# $Id: rrdutil.py,v 1.5 2005/02/16 16:23:46 grisha Exp $
 
 """ RRDTool related utilities """
 
@@ -47,6 +47,7 @@ def period_total(rrd, start, end, dslist = ['in','out'], step=RRDSTEP):
                 totals[n] += row[ds_idx]
             n += 1
 
+    # convert to per minute values
     return [long(x*step) for x in totals]
 
 
@@ -107,6 +108,8 @@ def graph(rrd, back=86400, title='', width=400, height=100):
               '--title', title,
               '-w', str(width),
               '-h', str(height),
+              '-c', 'SHADEB#FFFFFF',
+              '-c', 'SHADEA#FFFFFF',
               'DEF:in=%s:in:AVERAGE' % rrd,
               'DEF:out=%s:out:AVERAGE' % rrd,
               'CDEF:inbits=in,8,*',
