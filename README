@@ -1,0 +1,4 @@
+
+This is code that is common between admin and host, and should be
+installed on both admin and host servers.
+
