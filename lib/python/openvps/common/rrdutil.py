@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: rrdutil.py,v 1.3 2005/02/11 22:46:27 grisha Exp $
+# $Id: rrdutil.py,v 1.4 2005/02/15 21:49:36 grisha Exp $
 
 """ RRDTool related utilities """
 
@@ -29,22 +29,28 @@ import commands
 
 import RRD
 
-def period_total(rrd, start, end):
+def period_total(rrd, start, end, dslist = ['in','out'], step=RRDSTEP):
+
+    start, end = int(float(start)), int(float(end))
 
     header, rows = RRD.fetch(rrd, 'AVERAGE', '-s', str(start), '-e', str(end))
 
-    tin, tout = 0.0, 0.0
+    # convert DS names to numeric incies
+    dslist = [list(header).index(x) for x in dslist]
+
+    totals = [0] * len(dslist)
 
     for row in rows:
-        if row[1]:
-            tin += row[1]
-        if row[2]:
-            tim += row[2]
+        n = 0
+        for ds_idx in dslist:
+            if row[ds_idx]:
+                totals[n] += row[ds_idx]
+            n += 1
 
-    return long(tin*RRDSTEP), long(tout*RRDSTEP)
+    return [long(x*step) for x in totals]
 
 
-def period_total(rrd, start, end):
+def period_total_old(rrd, start, end):
 
     cmd = '%s fetch %s AVERAGE -s %d -e %d' % (RRDTOOL, rrd, start, end)
     pipe = os.popen(cmd, 'r')
@@ -76,7 +82,7 @@ def prev_month(year, month):
     else:
         return year, month-1
 
-def month_total(rrd, year, month):
+def month_total(rrd, year, month, dslist=['in', 'out']):
     """ Get total for the month
         year must be in YYYY format
     """
@@ -88,7 +94,7 @@ def month_total(rrd, year, month):
 
     e = time.mktime(time.strptime('%d%02d' % (eyear, emonth), '%Y%m')) - 86400
 
-    return period_total(rrd, s, e)
+    return period_total(rrd, s, e, dslist)
 
 def graph(rrd, back=86400, title='', width=400, height=100):
     """ Make an RRD graph. The caller is responsible for
@@ -109,6 +115,7 @@ def graph(rrd, back=86400, title='', width=400, height=100):
               'LINE1:outbits#0000FF:"bps out"')
 
     return tpath
+
 
 def graph_old(rrd, back=86400, title='', width=400, height=100):
     """ Make an RRD graph. The caller is responsible for
