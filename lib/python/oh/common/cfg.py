@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# $Id: cfg.py,v 1.2 2004/12/24 05:26:50 grisha Exp $
+# $Id: cfg.py,v 1.3 2004/12/28 03:29:44 grisha Exp $
 
 # These config elements are common between host and admin
 
@@ -63,6 +63,10 @@ MON_DATA_DEF = [('hostname', None, None, None, None),
                 ('disk_a_writes', 'counter', HB, 0, 0xFFFFFF00L),
                 ('disk_b_reads', 'counter', HB, 0, 0xFFFFFF00L),
                 ('disk_b_writes', 'counter', HB, 0, 0xFFFFFF00L),
+                ('ipc_shmall', 'gauge', HB, 0, 0xFFFFFF00L),
+                ('ipc_totshm', 'gauge', HB, 0, 0xFFFFFF00L),
+                ('ipc_semmns', 'gauge', HB, 0, 0xFFFFFF00L),
+                ('ipc_totsem', 'gauge', HB, 0, 0xFFFFFF00L),
                 ]
 
 
