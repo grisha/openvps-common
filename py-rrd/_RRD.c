@@ -13,7 +13,7 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  *
- * $Id: _RRD.c,v 1.5 2005/02/11 22:24:19 grisha Exp $
+ * $Id: _RRD.c,v 1.6 2005/09/19 21:43:23 grisha Exp $
  *
  */
 
@@ -180,10 +180,11 @@ static PyObject * _RRD_graph(int argc, char **argv) {
 
     int rc, xsize, ysize;
     char **prdata;
+    double ymin, ymax;
 
     PyObject *result;
 
-    rc = rrd_graph(argc, argv, &prdata, &xsize, &ysize);
+    rc = rrd_graph(argc, argv, &prdata, &xsize, &ysize, NULL, &ymin, &ymax);
 
     if (rc == -1) {
         PyMem_DEL(argv);
