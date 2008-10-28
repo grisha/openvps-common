@@ -45,7 +45,10 @@ echo '[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT'
 echo "%files"
 echo "%defattr(-,root,root,-)"
 echo "%doc"
-echo "%{_libdir}/@PYTHON@/site-packages/"
+# on x86_64 _libdir is /usr/lib64, and we need both
+echo "%{_libdir}/@PYTHON@/site-packages"
+echo "/usr/lib/@PYTHON@/site-packages"
+
 
 
 
