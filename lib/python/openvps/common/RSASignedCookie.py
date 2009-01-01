@@ -14,16 +14,21 @@
 # limitations under the License.
 #
 
-# $Id: RSASignedCookie.py,v 1.6 2005/04/01 15:08:04 grisha Exp $
+# $Id: RSASignedCookie.py,v 1.7 2009/01/01 00:35:24 grisha Exp $
 
 from mod_python import Cookie
 from mod_python.Cookie import CookieError
 
-from Crypto.PublicKey import RSA
-
 import sha
 import marshal
 import binascii
+
+# When same host sends cookies signed by different keys, you will
+# always get a signature verification error. This can be avoided by
+# using different separators (e.g. '|') so that cookies look different
+# to your code.
+
+SEPARATOR = ':'
 
 class RSACookieError(CookieError):
     pass
@@ -44,6 +49,7 @@ class RSASignedCookie(Cookie.SignedCookie):
             raise RSACookieError, "Cannot sign without a RSA private key"
 
         digest = sha.new(val).digest()
+        # XXX it seems the random parameter is simply ignored by Crypto code
         sig = self.__data__["secret"].sign(digest, open('/dev/urandom').read(32))
 
         return str(sig[0])
@@ -60,11 +66,11 @@ class RSASignedCookie(Cookie.SignedCookie):
         # if we do not have the private key, then we cannot present a string
         # representation, so we will fake something:
         if not self.__data__["secret"]:
-            result = ["%s=%s:%s" % (self.name, 'NO RSA SIGNATURE SINCE NO PRIV KEY AVAILABLE',
-                                    self.value)]
+            result = ["%s=%s%s%s" % (self.name, 'NO RSA SIGNATURE SINCE NO PRIV KEY AVAILABLE',
+                                    SEPARATOR, self.value)]
         else:
-            result = ["%s=%s:%s" % (self.name, self.rsa_sign(self.name+self.value),
-                                    self.value)]
+            result = ["%s=%s%s%s" % (self.name, self.rsa_sign(self.name+self.value),
+                                    SEPARATOR, self.value)]
         for name in self._valid_attr:
             if hasattr(self, name):
                 if name in ("secure", "discard"):
@@ -78,7 +84,7 @@ class RSASignedCookie(Cookie.SignedCookie):
 
 
         try:
-            sig, val = self.value.split(':', 1)
+            sig, val = self.value.split(SEPARATOR, 1)
             sig = (long(sig),)
         except ValueError:
             raise RSACookieError, "Not an RSA Signed Cookie: %s=%s" % (self.name, self.value)
